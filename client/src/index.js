@@ -5,6 +5,8 @@ import { debugContextDevtool } from "react-context-devtool";
 
 import { Context, Reducer } from "./state";
 
+import ProtectedRoute from "./middleware/ProtectedRoute";
+
 import App from "./pages/App";
 import Splash from "./pages/Splash";
 
@@ -19,7 +21,7 @@ const Root = () => {
     <Router>
       <Context.Provider value={{ state, dispatch }}>
         <Switch>
-          <Route exact path="/" component={App} />
+          <ProtectedRoute exact path="/" component={App} />
           <Route path="/login" component={Splash} />
         </Switch>
       </Context.Provider>

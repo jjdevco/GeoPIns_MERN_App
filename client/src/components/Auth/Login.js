@@ -4,7 +4,7 @@ import { GoogleLogin } from "react-google-login";
 import { withStyles } from "@material-ui/core/styles";
 
 import { Context } from "../../state";
-import { LOGIN_USER } from "../../state/types";
+import { LOGIN_USER, IS_AUTH } from "../../state/types";
 
 import { ME_QUERY } from "../../graphql/queries";
 
@@ -24,7 +24,8 @@ const Login = ({ classes }) => {
       });
 
       const { me } = await client.request(ME_QUERY);
-      dispatch({ type: LOGIN_USER, payload: me });
+      await dispatch({ type: LOGIN_USER, payload: me });
+      await dispatch({ type: IS_AUTH, payload: googleUser.isSignedIn() });
     } catch (err) {
       onFailure(err);
     }
@@ -51,6 +52,7 @@ const Login = ({ classes }) => {
         onSuccess={onSuccess}
         onFailure={onFailure}
         isSignedIn={true}
+        buttonText="Login with Google"
         theme="dark"
       />
     </div>
