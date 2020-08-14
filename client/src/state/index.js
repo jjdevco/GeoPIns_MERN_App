@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import { LOGIN_USER, IS_AUTH } from "./types";
+import { LOGIN_USER, SIGNOUT_USER, IS_AUTH } from "./types";
 
 export const Context = createContext({
   currentUser: null,
@@ -13,6 +13,14 @@ export const Reducer = (state, { type, payload }) => {
         ...state,
         currentUser: payload,
       };
+
+    case SIGNOUT_USER: {
+      return {
+        ...state,
+        currentUser: null,
+        isAuth: false,
+      };
+    }
 
     case IS_AUTH: {
       return { ...state, isAuth: payload };
