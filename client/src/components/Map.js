@@ -5,6 +5,7 @@ import MapGL, { NavigationControl, Marker } from "@urbica/react-map-gl";
 import { Context } from "../state";
 import { CREATE_DRAFT, UPDATE_DRAFT_LOCATION } from "../state/types";
 
+import Blog from "./Blog";
 import PinIcon from "./PinIcon";
 // import Button from "@material-ui/core/Button";
 // import Typography from "@material-ui/core/Typography";
@@ -14,6 +15,7 @@ const MAP_API_KEY = process.env.REACT_APP_MAP_API_KEY;
 
 const Map = ({ classes }) => {
   const { state, dispatch } = useContext(Context);
+  const { draft } = state;
 
   const [viewport, setViewport] = useState({
     latitude: 6.232380124359144,
@@ -41,7 +43,7 @@ const Map = ({ classes }) => {
   };
 
   const handleMapClick = ({ lngLat }) => {
-    if (!state.draft) {
+    if (!draft) {
       dispatch({ type: CREATE_DRAFT });
     }
 
@@ -62,9 +64,7 @@ const Map = ({ classes }) => {
         style={{ width: "100vw", height: "calc(100vh - 64px)" }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         accessToken={MAP_API_KEY}
-        latitude={viewport.latitude}
-        longitude={viewport.longitude}
-        zoom={viewport.zoom}
+        {...viewport}
         onViewportChange={setViewport}
         onClick={handleMapClick}
       >
@@ -85,10 +85,10 @@ const Map = ({ classes }) => {
         )}
 
         {/* Draft Pin */}
-        {state.draft && (
+        {draft && (
           <Marker
-            latitude={state.draft.latitude}
-            longitude={state.draft.longitude}
+            latitude={draft.latitude}
+            longitude={draft.longitude}
             offsetLeft={19}
             offsetTop={-37}
             onDragEnd={onDragEnd}
@@ -98,6 +98,9 @@ const Map = ({ classes }) => {
           </Marker>
         )}
       </MapGL>
+
+      {/* Blog area */}
+      <Blog />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import {
   IS_AUTH,
   CREATE_DRAFT,
   UPDATE_DRAFT_LOCATION,
+  CLEAR_DRAFT,
 } from "./types";
 
 export const Context = createContext({
@@ -45,6 +46,10 @@ export const Reducer = (state, { type, payload }) => {
 
     case UPDATE_DRAFT_LOCATION: {
       return { ...state, draft: payload };
+    }
+
+    case CLEAR_DRAFT: {
+      return { ...state, draft: null };
     }
 
     default:

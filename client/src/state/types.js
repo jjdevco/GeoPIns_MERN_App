@@ -5,3 +5,4 @@ export const IS_AUTH = "IS_AUTH";
 
 export const CREATE_DRAFT = "CREATE_DRAFT";
 export const UPDATE_DRAFT_LOCATION = "UPDATE_DRAFT_LOCATION";
+export const CLEAR_DRAFT = "CLEAR_DRAFT";
