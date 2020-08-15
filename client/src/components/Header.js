@@ -29,7 +29,11 @@ const Header = ({ classes }) => {
           {/* Current User info */}
           {isAuth && (
             <div className={classes.grow}>
-              <img src={currentUser.picture} alt={currentUser.name} />
+              <img
+                className={classes.picture}
+                src={currentUser.picture}
+                alt={currentUser.name}
+              />
               <Typography variant="h5" color="inherit" noWrap>
                 {currentUser.name}
               </Typography>

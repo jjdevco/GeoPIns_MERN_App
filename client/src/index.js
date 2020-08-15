@@ -30,6 +30,7 @@ const Root = () => {
 };
 
 const container = document.getElementById("root");
+
 ReactDOM.render(<Root />, container);
 
 if (process.env.NODE_ENV === "development") debugContextDevtool(container);
