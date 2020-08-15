@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
-import { GraphQLClient } from "graphql-request";
 import { GoogleLogin } from "react-google-login";
 import { withStyles } from "@material-ui/core/styles";
 
 import { Context } from "../../state";
 import { LOGIN_USER, IS_AUTH } from "../../state/types";
 
+import NewClient from "../../graphql/client";
 import { ME_QUERY } from "../../graphql/queries";
 
 import Typography from "@material-ui/core/Typography";
@@ -19,9 +19,7 @@ const Login = ({ classes }) => {
     try {
       const idToken = googleUser.getAuthResponse().id_token;
 
-      const client = new GraphQLClient(process.env.REACT_APP_API_HOST, {
-        headers: { authorization: idToken },
-      });
+      const client = NewClient(idToken);
 
       const { me } = await client.request(ME_QUERY);
       await dispatch({ type: LOGIN_USER, payload: me });

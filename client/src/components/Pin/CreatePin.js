@@ -1,8 +1,12 @@
 import React, { useState, useContext } from "react";
+import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 
 import { Context } from "../../state";
 import { CLEAR_DRAFT } from "../../state/types";
+
+import GrahpqlClient from "../../graphql/client";
+import { CREATE_PIN_MUTATION } from "../../graphql/mutations";
 
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
@@ -11,18 +15,31 @@ import AddAPhotoIcon from "@material-ui/icons/AddAPhotoTwoTone";
 import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 import ClearIcon from "@material-ui/icons/Clear";
 import SaveIcon from "@material-ui/icons/SaveTwoTone";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const CreatePin = ({ classes }) => {
-  const { dispatch } = useContext(Context);
+  const { state, dispatch } = useContext(Context);
+  const { draft } = state;
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
+  const [saving, setSaving] = useState(false);
 
-  const disabled = !title.trim() || !content.trim();
+  const disabled = !title.trim() || !content.trim() || saving;
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleImageUpload = async () => {
+    const data = new FormData();
+    data.append("file", image);
+    data.append("upload_preset", "geopins");
+    data.append("cloud_name", "jjdevco");
+
+    const res = await axios.post(
+      "https://api.cloudinary.com/v1_1/jjdevco/image/upload",
+      data
+    );
+
+    return res.data.url;
   };
 
   const handleClearDraft = () => {
@@ -30,6 +47,32 @@ const CreatePin = ({ classes }) => {
     setImage("");
     setContent("");
     dispatch({ type: CLEAR_DRAFT });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setSaving(true);
+      let url;
+
+      if (image) {
+        url = await handleImageUpload();
+      }
+      const client = GrahpqlClient();
+      const variables = { title, image: url ? url : null, content, ...draft };
+
+      const { createPin } = await client.request(
+        CREATE_PIN_MUTATION,
+        variables
+      );
+
+      console.log("Pin created", createPin);
+      setSaving(false);
+      dispatch({ type: CLEAR_DRAFT });
+    } catch (err) {
+      setSaving(false);
+      console.error(err);
+    }
   };
 
   return (
@@ -105,10 +148,16 @@ const CreatePin = ({ classes }) => {
           variant="contained"
           color="secondary"
           disabled={disabled}
-          onSubmit={handleSubmit}
+          onClick={handleSubmit}
         >
-          Submit
-          <SaveIcon className={classes.rightIcon} />
+          {saving ? (
+            <CircularProgress size={24} />
+          ) : (
+            <>
+              Submit
+              <SaveIcon className={classes.rightIcon} />
+            </>
+          )}
         </Button>
       </div>
     </form>
