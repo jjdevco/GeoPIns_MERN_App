@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import MapGL, { NavigationControl, Marker } from "@urbica/react-map-gl";
+
+import { Context } from "../state";
+import { CREATE_DRAFT, UPDATE_DRAFT_LOCATION } from "../state/types";
 
 import PinIcon from "./PinIcon";
 // import Button from "@material-ui/core/Button";
@@ -10,6 +13,8 @@ import PinIcon from "./PinIcon";
 const MAP_API_KEY = process.env.REACT_APP_MAP_API_KEY;
 
 const Map = ({ classes }) => {
+  const { state, dispatch } = useContext(Context);
+
   const [viewport, setViewport] = useState({
     latitude: 6.232380124359144,
     longitude: -75.57307319431575,
@@ -17,10 +22,6 @@ const Map = ({ classes }) => {
   });
 
   const [userPosition, setUserPosition] = useState(null);
-
-  const onDragEnd = (lngLat) => {
-    setUserPosition({ longitude: lngLat.lng, latitude: lngLat.lat });
-  };
 
   const getUserPosition = () => {
     if ("geolocation" in navigator) {
@@ -30,6 +31,24 @@ const Map = ({ classes }) => {
         setUserPosition({ latitude, longitude });
       });
     }
+  };
+
+  const onDragEnd = (lngLat) => {
+    dispatch({
+      type: UPDATE_DRAFT_LOCATION,
+      payload: { longitude: lngLat.lng, latitude: lngLat.lat },
+    });
+  };
+
+  const handleMapClick = ({ lngLat }) => {
+    if (!state.draft) {
+      dispatch({ type: CREATE_DRAFT });
+    }
+
+    dispatch({
+      type: UPDATE_DRAFT_LOCATION,
+      payload: { latitude: lngLat.lat, longitude: lngLat.lng },
+    });
   };
 
   useEffect(() => {
@@ -47,6 +66,7 @@ const Map = ({ classes }) => {
         longitude={viewport.longitude}
         zoom={viewport.zoom}
         onViewportChange={setViewport}
+        onClick={handleMapClick}
       >
         <div className={classes.navigationControl}>
           <NavigationControl showCompass showZoom position="top-right" />
@@ -59,10 +79,22 @@ const Map = ({ classes }) => {
             longitude={viewport.longitude}
             offsetLeft={19}
             offsetTop={-37}
+          >
+            <PinIcon size={40} color="hotpink" />
+          </Marker>
+        )}
+
+        {/* Draft Pin */}
+        {state.draft && (
+          <Marker
+            latitude={state.draft.latitude}
+            longitude={state.draft.longitude}
+            offsetLeft={19}
+            offsetTop={-37}
             onDragEnd={onDragEnd}
             draggable
           >
-            <PinIcon size={40} color="red" />
+            <PinIcon size={40} color="blue" />
           </Marker>
         )}
       </MapGL>

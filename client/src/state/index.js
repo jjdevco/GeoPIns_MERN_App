@@ -1,9 +1,16 @@
 import { createContext } from "react";
-import { LOGIN_USER, SIGNOUT_USER, IS_AUTH } from "./types";
+import {
+  LOGIN_USER,
+  SIGNOUT_USER,
+  IS_AUTH,
+  CREATE_DRAFT,
+  UPDATE_DRAFT_LOCATION,
+} from "./types";
 
 export const Context = createContext({
   currentUser: null,
   isAuth: false,
+  draft: null,
 });
 
 export const Reducer = (state, { type, payload }) => {
@@ -24,6 +31,20 @@ export const Reducer = (state, { type, payload }) => {
 
     case IS_AUTH: {
       return { ...state, isAuth: payload };
+    }
+
+    case CREATE_DRAFT: {
+      return {
+        ...state,
+        draft: {
+          latitude: 0,
+          longitude: 0,
+        },
+      };
+    }
+
+    case UPDATE_DRAFT_LOCATION: {
+      return { ...state, draft: payload };
     }
 
     default:
