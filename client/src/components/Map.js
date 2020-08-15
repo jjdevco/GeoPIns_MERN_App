@@ -2,8 +2,15 @@ import React, { useState, useEffect, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import MapGL, { NavigationControl, Marker } from "@urbica/react-map-gl";
 
+import GraphqlClient from "../graphql/client";
+import { GET_PINS_QUERY } from "../graphql/queries";
+
 import { Context } from "../state";
-import { CREATE_DRAFT, UPDATE_DRAFT_LOCATION } from "../state/types";
+import {
+  CREATE_DRAFT,
+  UPDATE_DRAFT_LOCATION,
+  UPDATE_PINS,
+} from "../state/types";
 
 import Blog from "./Blog";
 import PinIcon from "./PinIcon";
@@ -15,7 +22,7 @@ const MAP_API_KEY = process.env.REACT_APP_MAP_API_KEY;
 
 const Map = ({ classes }) => {
   const { state, dispatch } = useContext(Context);
-  const { draft } = state;
+  const { draft, pins } = state;
 
   const [viewport, setViewport] = useState({
     latitude: 6.232380124359144,
@@ -33,6 +40,12 @@ const Map = ({ classes }) => {
         setUserPosition({ latitude, longitude });
       });
     }
+  };
+
+  const getPins = async () => {
+    const client = GraphqlClient();
+    const { getPins } = await client.request(GET_PINS_QUERY);
+    dispatch({ type: UPDATE_PINS, payload: getPins });
   };
 
   const onDragEnd = (lngLat) => {
@@ -55,6 +68,10 @@ const Map = ({ classes }) => {
 
   useEffect(() => {
     getUserPosition();
+  }, []);
+
+  useEffect(() => {
+    getPins();
   }, []);
 
   return (
@@ -97,6 +114,19 @@ const Map = ({ classes }) => {
             <PinIcon size={40} color="blue" />
           </Marker>
         )}
+
+        {/* Saved Pins */}
+        {pins.map((pin) => (
+          <Marker
+            key={pin._id}
+            latitude={pin.latitude}
+            longitude={pin.longitude}
+            offsetLeft={19}
+            offsetTop={-37}
+          >
+            <PinIcon size={40} color="orange" />
+          </Marker>
+        ))}
       </MapGL>
 
       {/* Blog area */}

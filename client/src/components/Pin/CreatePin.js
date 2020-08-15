@@ -3,7 +3,7 @@ import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 
 import { Context } from "../../state";
-import { CLEAR_DRAFT } from "../../state/types";
+import { CLEAR_DRAFT, CREATE_PIN } from "../../state/types";
 
 import GrahpqlClient from "../../graphql/client";
 import { CREATE_PIN_MUTATION } from "../../graphql/mutations";
@@ -66,8 +66,11 @@ const CreatePin = ({ classes }) => {
         variables
       );
 
-      console.log("Pin created", createPin);
       setSaving(false);
+      dispatch({
+        type: CREATE_PIN,
+        payload: createPin,
+      });
       dispatch({ type: CLEAR_DRAFT });
     } catch (err) {
       setSaving(false);
