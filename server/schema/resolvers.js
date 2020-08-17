@@ -36,7 +36,7 @@ module.exports = {
 
       const pinAdded = await Pin.populate(newPin, "author");
 
-      pupsub.publis(PIN_ADDED, { pinAdded });
+      pupsub.publish(PIN_ADDED, { pinAdded });
 
       return pinAdded;
     }),
@@ -47,7 +47,7 @@ module.exports = {
         author: ctx.user._id,
       }).exec();
 
-      pupsub.publis(PIN_REMOVED, { pinRemoved });
+      pupsub.publish(PIN_REMOVED, { pinRemoved });
 
       return pinRemoved;
     }),
@@ -63,7 +63,7 @@ module.exports = {
         .populate("author")
         .populate("comments.author");
 
-      pupsub.publis(PIN_UPDATED, { pinUpdated });
+      pupsub.publish(PIN_UPDATED, { pinUpdated });
 
       return pinUpdated;
     }),

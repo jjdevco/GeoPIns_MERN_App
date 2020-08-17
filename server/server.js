@@ -1,7 +1,12 @@
 const env = require("dotenv").config();
 const path = require("path");
 const express = require("express");
-const { ApolloServer } = require("apollo-server-express");
+const { ApolloServer, makeExecutableSchema } = require("apollo-server-express");
+const { createServer } = require("http");
+const { execute, subscribe } = require("graphql");
+const { PubSub } = require("graphql-subscriptions");
+const { SubscriptionServer } = require("subscriptions-transport-ws");
+
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
@@ -25,21 +30,40 @@ app.use("/graphql", authHandler);
 // Error Handler Middleware
 app.use(errorHandler);
 
-// Apply Express Middlewares to Apollo
-const server = new ApolloServer({
+const schema = makeExecutableSchema({
   typeDefs,
   resolvers,
+});
+
+// Apply Express Middlewares to Apollo
+const apolloServer = new ApolloServer({
+  schema,
   context: ({ req }) => {
     const user = req.user;
     return { user: user ? user : null };
   },
 });
-server.applyMiddleware({ app });
+apolloServer.applyMiddleware({ app });
+
+const pubsub = new PubSub();
+const server = createServer(app);
 
 // Listen server
 const port = process.env.PORT || 5000;
+
 initConnection(() => {
-  app.listen({ port }, () => {
+  server.listen(port, () => {
     console.log(`Server listening on ${port}`);
+    new SubscriptionServer(
+      {
+        execute,
+        subscribe,
+        schema,
+      },
+      {
+        server: server,
+        path: "/subscriptions",
+      }
+    );
   });
 });

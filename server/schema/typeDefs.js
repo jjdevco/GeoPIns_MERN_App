@@ -8,12 +8,6 @@ module.exports = gql`
     picture: String
   }
 
-  type Comment {
-    text: String
-    createdAt: String
-    author: User
-  }
-
   type Pin {
     _id: ID
     createdAt: String
@@ -24,6 +18,12 @@ module.exports = gql`
     longitude: Float
     author: User
     comments: [Comment]
+  }
+
+  type Comment {
+    text: String
+    createdAt: String
+    author: User
   }
 
   input CreatePinInput {
@@ -47,7 +47,7 @@ module.exports = gql`
 
   type Subscription {
     pinAdded: Pin
-    pinRemoved: Pin
     pinUpdated: Pin
+    pinRemoved: Pin
   }
 `;
