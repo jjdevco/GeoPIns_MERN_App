@@ -5,15 +5,18 @@ import { Context } from "../state";
 
 import NoContent from "./Pin/NoContent";
 import CreatePin from "./Pin/CreatePin";
+import PinContent from "./Pin/PinContent";
 
 import { Paper } from "@material-ui/core";
 
 const Blog = ({ classes }) => {
-  const { state } = useContext(Context);
-  const { draft } = state;
+  const {
+    state: { draft, currentPin },
+  } = useContext(Context);
+
   return (
     <Paper className={classes.root}>
-      {!draft ? <NoContent /> : <CreatePin />}
+      {!draft ? currentPin ? <PinContent /> : <NoContent /> : <CreatePin />}
     </Paper>
   );
 };
