@@ -6,6 +6,7 @@ module.exports = function initConnection(callback) {
   mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useFindAndModify: false,
   });
 
   const db = mongoose.connection;

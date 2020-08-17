@@ -10,6 +10,7 @@ import {
   CREATE_PIN,
   UPDATE_PINS,
   SET_PIN,
+  UPDATE_PIN,
   DELETE_PIN,
 } from "./types";
 
@@ -75,6 +76,13 @@ export const Reducer = (state, { type, payload }) => {
 
     case SET_PIN: {
       return { ...state, currentPin: payload, draft: null };
+    }
+
+    case UPDATE_PIN: {
+      const updatedPins = [...state.pins].map((pin) =>
+        pin._id === payload._id ? { ...payload } : pin
+      );
+      return { ...state, pins: [...updatedPins], currentPin: payload };
     }
 
     case DELETE_PIN: {
