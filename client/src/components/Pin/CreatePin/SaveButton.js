@@ -3,7 +3,7 @@ import axios from "axios";
 import { withStyles } from "@material-ui/core/styles";
 
 import { Context } from "../../../state";
-import { CREATE_PIN, CLEAR_DRAFT } from "../../../state/types";
+import { CLEAR_DRAFT } from "../../../state/types";
 
 import GrahpqlClient from "../../../graphql/client";
 import { CREATE_PIN_MUTATION } from "../../../graphql/mutations";
@@ -44,17 +44,10 @@ const SaveButton = ({ title, image, content, onClear, classes }) => {
       const client = GrahpqlClient();
       const variables = { title, image: url ? url : null, content, ...draft };
 
-      const { createPin } = await client.request(
-        CREATE_PIN_MUTATION,
-        variables
-      );
+      await client.request(CREATE_PIN_MUTATION, variables);
 
       setSaving(false);
 
-      dispatch({
-        type: CREATE_PIN,
-        payload: createPin,
-      });
       dispatch({ type: CLEAR_DRAFT });
 
       onClear();

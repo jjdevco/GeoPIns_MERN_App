@@ -20,7 +20,14 @@ export const CREATE_PIN_MUTATION = `
         email
         picture
       }
-      comments
+      comments {
+        text
+        createdAt
+        author {
+          name
+          picture
+        }
+      }
     }
   }
 `;

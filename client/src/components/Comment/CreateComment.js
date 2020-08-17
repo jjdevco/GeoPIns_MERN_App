@@ -2,7 +2,6 @@ import React, { useState, useContext } from "react";
 import { withStyles } from "@material-ui/core";
 
 import { Context } from "../../state";
-import { UPDATE_PIN } from "../../state/types";
 
 import GraphqlClient from "../../graphql/client";
 import { CREATE_COMMENT_MUTATION } from "../../graphql/mutations";
@@ -19,7 +18,6 @@ const CreateComment = ({ classes }) => {
     state: {
       currentPin: { _id },
     },
-    dispatch,
   } = useContext(Context);
 
   const [comment, setComment] = useState("");
@@ -30,11 +28,7 @@ const CreateComment = ({ classes }) => {
     try {
       const client = GraphqlClient();
       const variables = { pinId: _id, text: comment };
-      const { createComment } = await client.request(
-        CREATE_COMMENT_MUTATION,
-        variables
-      );
-      await dispatch({ type: UPDATE_PIN, payload: createComment });
+      await client.request(CREATE_COMMENT_MUTATION, variables);
       setComment("");
       setSaving(false);
     } catch (err) {

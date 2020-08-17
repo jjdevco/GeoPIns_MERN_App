@@ -86,10 +86,14 @@ export const Reducer = (state, { type, payload }) => {
     }
 
     case DELETE_PIN: {
+      const currentPin =
+        state.currentPin && state.currentPin._id === payload._id
+          ? null
+          : state.currentPin;
       const filterPins = [...state.pins].filter(
         (pin) => pin._id !== payload._id
       );
-      return { ...state, pins: [...filterPins], currentPin: null };
+      return { ...state, pins: [...filterPins], currentPin };
     }
 
     default:
