@@ -5,6 +5,7 @@ import diferrenceInMinutes from "date-fns/difference_in_minutes";
 
 import GraphqlClient from "../graphql/client";
 import { GET_PINS_QUERY } from "../graphql/queries";
+import { DELETE_PIN_MUTATION } from "../graphql/mutations";
 
 import { Context } from "../state";
 import {
@@ -12,6 +13,7 @@ import {
   UPDATE_DRAFT_LOCATION,
   UPDATE_PINS,
   SET_PIN,
+  DELETE_PIN,
 } from "../state/types";
 
 import Blog from "./Blog";
@@ -79,6 +81,14 @@ const Map = ({ classes }) => {
       type: UPDATE_DRAFT_LOCATION,
       payload: { latitude: lngLat.lat, longitude: lngLat.lng },
     });
+  };
+
+  const handleDeletePin = async (pin) => {
+    const client = GraphqlClient();
+    const variables = { pinId: pin._id };
+    const { deletePin } = await client.request(DELETE_PIN_MUTATION, variables);
+    dispatch({ type: DELETE_PIN, payload: deletePin });
+    setPopup(null);
   };
 
   const highlightNewPin = (pin) =>
@@ -172,7 +182,10 @@ const Map = ({ classes }) => {
                 {popup.latitude.toFixed(6)}, {popup.longitude.toFixed(6)}
               </Typography>
               {isAuthUser() && (
-                <Button className={classes.deleteIcon}>
+                <Button
+                  className={classes.deleteIcon}
+                  onClick={() => handleDeletePin(popup)}
+                >
                   <DeleteIcon />
                 </Button>
               )}

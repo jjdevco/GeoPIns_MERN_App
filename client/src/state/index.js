@@ -10,6 +10,7 @@ import {
   CREATE_PIN,
   UPDATE_PINS,
   SET_PIN,
+  DELETE_PIN,
 } from "./types";
 
 export const Context = createContext({
@@ -67,12 +68,20 @@ export const Reducer = (state, { type, payload }) => {
         pins: [...prevPins, newPin],
       };
     }
+
     case UPDATE_PINS: {
       return { ...state, pins: [...state.pins, ...payload] };
     }
 
     case SET_PIN: {
       return { ...state, currentPin: payload, draft: null };
+    }
+
+    case DELETE_PIN: {
+      const filterPins = [...state.pins].filter(
+        (pin) => pin._id !== payload._id
+      );
+      return { ...state, pins: [...filterPins], currentPin: null };
     }
 
     default:

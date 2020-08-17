@@ -10,3 +10,4 @@ export const CLEAR_DRAFT = "CLEAR_DRAFT";
 export const CREATE_PIN = "CREATE_PIN";
 export const UPDATE_PINS = "UPDATE_PINS";
 export const SET_PIN = "SET_PIN";
+export const DELETE_PIN = "DELETE_PIN";
