@@ -30,6 +30,7 @@ const Login = ({ classes }) => {
   };
 
   const onFailure = (err) => {
+    dispatch({ type: IS_AUTH, payload: false });
     console.error(err);
   };
 
