@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
-import MapGL, { NavigationControl, Marker } from "@urbica/react-map-gl";
+import MapGL, { NavigationControl, Marker, Popup } from "@urbica/react-map-gl";
+import diferrenceInMinutes from "date-fns/difference_in_minutes";
 
 import GraphqlClient from "../graphql/client";
 import { GET_PINS_QUERY } from "../graphql/queries";
@@ -10,19 +11,23 @@ import {
   CREATE_DRAFT,
   UPDATE_DRAFT_LOCATION,
   UPDATE_PINS,
+  SET_PIN,
 } from "../state/types";
 
 import Blog from "./Blog";
 import PinIcon from "./PinIcon";
-// import Button from "@material-ui/core/Button";
-// import Typography from "@material-ui/core/Typography";
-// import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
+
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 
 const MAP_API_KEY = process.env.REACT_APP_MAP_API_KEY;
 
 const Map = ({ classes }) => {
-  const { state, dispatch } = useContext(Context);
-  const { draft, pins } = state;
+  const {
+    state: { draft, pins, currentUser },
+    dispatch,
+  } = useContext(Context);
 
   const [viewport, setViewport] = useState({
     latitude: 6.232380124359144,
@@ -31,6 +36,9 @@ const Map = ({ classes }) => {
   });
 
   const [userPosition, setUserPosition] = useState(null);
+
+  const [popup, setPopup] = useState(null);
+  const isAuthUser = () => currentUser._id === popup.author._id;
 
   const getUserPosition = () => {
     if ("geolocation" in navigator) {
@@ -55,7 +63,14 @@ const Map = ({ classes }) => {
     });
   };
 
+  const handleSelectPin = async (pin) => {
+    setPopup(pin);
+    await dispatch({ type: SET_PIN, payload: pin });
+  };
+
   const handleMapClick = ({ lngLat }) => {
+    setPopup(null);
+
     if (!draft) {
       dispatch({ type: CREATE_DRAFT });
     }
@@ -65,6 +80,11 @@ const Map = ({ classes }) => {
       payload: { latitude: lngLat.lat, longitude: lngLat.lng },
     });
   };
+
+  const highlightNewPin = (pin) =>
+    diferrenceInMinutes(Date.now(), Number(pin.createdAt)) <= 30
+      ? "limegreen"
+      : "darkblue";
 
   useEffect(() => {
     getUserPosition();
@@ -86,7 +106,7 @@ const Map = ({ classes }) => {
         onClick={handleMapClick}
       >
         <div className={classes.navigationControl}>
-          <NavigationControl showCompass showZoom position="top-right" />
+          <NavigationControl showCompass showFade position="top-right" />
         </div>
 
         {/* Pin for User's current Position */}
@@ -111,7 +131,7 @@ const Map = ({ classes }) => {
             onDragEnd={onDragEnd}
             draggable
           >
-            <PinIcon size={40} color="blue" />
+            <PinIcon size={40} color="red " />
           </Marker>
         )}
 
@@ -124,9 +144,41 @@ const Map = ({ classes }) => {
             offsetLeft={19}
             offsetTop={-37}
           >
-            <PinIcon size={40} color="orange" />
+            <PinIcon
+              size={40}
+              color={highlightNewPin(pin)}
+              onClick={() => handleSelectPin(pin)}
+            />
           </Marker>
         ))}
+
+        {/*  Popup Dialog for Created Pins */}
+
+        {popup && (
+          <Popup
+            anchor="top"
+            latitude={popup.latitude}
+            longitude={popup.longitude}
+            closeOnClick={false}
+            onClose={() => handleSelectPin(null)}
+          >
+            <img
+              className={classes.popupImage}
+              src={popup.image}
+              alt={popup.title}
+            />
+            <div className={classes.popupTab}>
+              <Typography>
+                {popup.latitude.toFixed(6)}, {popup.longitude.toFixed(6)}
+              </Typography>
+              {isAuthUser() && (
+                <Button className={classes.deleteIcon}>
+                  <DeleteIcon />
+                </Button>
+              )}
+            </div>
+          </Popup>
+        )}
       </MapGL>
 
       {/* Blog area */}
@@ -135,7 +187,7 @@ const Map = ({ classes }) => {
   );
 };
 
-const styles = {
+const styles = (theme) => ({
   root: {
     display: "flex",
   },
@@ -164,6 +216,6 @@ const styles = {
     justifyContent: "center",
     flexDirection: "column",
   },
-};
+});
 
 export default withStyles(styles)(Map);

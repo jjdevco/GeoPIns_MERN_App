@@ -9,6 +9,7 @@ import {
   CLEAR_DRAFT,
   CREATE_PIN,
   UPDATE_PINS,
+  SET_PIN,
 } from "./types";
 
 export const Context = createContext({
@@ -16,6 +17,7 @@ export const Context = createContext({
   isAuth: false,
   draft: null,
   pins: [],
+  currentPin: null,
 });
 
 export const Reducer = (state, { type, payload }) => {
@@ -45,6 +47,7 @@ export const Reducer = (state, { type, payload }) => {
           latitude: 0,
           longitude: 0,
         },
+        currentPin: null,
       };
     }
 
@@ -66,6 +69,10 @@ export const Reducer = (state, { type, payload }) => {
     }
     case UPDATE_PINS: {
       return { ...state, pins: [...state.pins, ...payload] };
+    }
+
+    case SET_PIN: {
+      return { ...state, currentPin: payload, draft: null };
     }
 
     default:
