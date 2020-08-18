@@ -12,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import Signout from "../components/Auth/Signout";
 
 const Header = ({ classes }) => {
-  const mobileSize = useMediaQuery("(max-width: 650px)");
+  const mobileSize = useMediaQuery("(max-width: 800px)");
 
   const { state } = useContext(Context);
   const { currentUser, isAuth } = state;
@@ -25,6 +25,7 @@ const Header = ({ classes }) => {
           <div className={classes.grow}>
             <MapIcon className={classes.icon} />
             <Typography
+              style={{ fontWeight: "bold" }}
               className={mobileSize ? classes.mobile : ""}
               component="h1"
               variant="h6"
@@ -73,7 +74,7 @@ const styles = (theme) => ({
   },
   icon: {
     marginRight: theme.spacing.unit,
-    color: "green",
+    color: "darkgreen",
     fontSize: 45,
   },
   mobile: {

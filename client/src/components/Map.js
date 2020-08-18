@@ -36,9 +36,9 @@ import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 const MAP_API_KEY = process.env.REACT_APP_MAP_API_KEY;
 
 const Map = ({ classes }) => {
-  const mobileSize = useMediaQuery("(max-width: 650px)");
+  const mobileSize = useMediaQuery("(max-width: 800px)");
   const {
-    state: { draft, pins, currentUser, currentPin },
+    state: { draft, pins, currentUser },
     dispatch,
   } = useContext(Context);
 

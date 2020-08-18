@@ -11,7 +11,7 @@ import PinContent from "./Pin/PinContent";
 import { Paper } from "@material-ui/core";
 
 const Blog = ({ classes }) => {
-  const mobileSize = useMediaQuery("(max-width: 650px)");
+  const mobileSize = useMediaQuery("(max-width: 880px)");
 
   const {
     state: { draft, currentPin },
@@ -32,6 +32,7 @@ const styles = {
     overflowY: "scroll",
     display: "flex",
     justifyContent: "center",
+    backgroundColor: "#f5f5f5",
   },
   rootMobile: {
     maxWidth: "100%",

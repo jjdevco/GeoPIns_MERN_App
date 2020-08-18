@@ -12,7 +12,7 @@ import AddAPhotoIcon from "@material-ui/icons/AddAPhotoTwoTone";
 import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 
 const CreatePin = ({ classes }) => {
-  const mobileSize = useMediaQuery("(max-width: 650px)");
+  const mobileSize = useMediaQuery("(max-width: 800px)");
 
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
