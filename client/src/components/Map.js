@@ -175,7 +175,7 @@ const Map = ({ classes }) => {
 
         {/*  Popup Dialog for Created Pins */}
 
-        {currentPin && (
+        {popup && (
           <Popup
             anchor="top"
             latitude={popup.latitude}
