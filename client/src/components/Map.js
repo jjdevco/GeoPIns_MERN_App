@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
 import MapGL, { NavigationControl, Marker, Popup } from "@urbica/react-map-gl";
 import diferrenceInMinutes from "date-fns/difference_in_minutes";
 
@@ -35,6 +36,7 @@ import DeleteIcon from "@material-ui/icons/DeleteTwoTone";
 const MAP_API_KEY = process.env.REACT_APP_MAP_API_KEY;
 
 const Map = ({ classes }) => {
+  const mobileSize = useMediaQuery("(max-width: 650px)");
   const {
     state: { draft, pins, currentUser, currentPin },
     dispatch,
@@ -113,12 +115,13 @@ const Map = ({ classes }) => {
   }, []);
 
   return (
-    <div className={classes.root}>
+    <div className={mobileSize ? classes.rootMobile : classes.root}>
       <h1>{userPosition}</h1>
       <MapGL
         style={{ width: "100vw", height: "calc(100vh - 64px)" }}
         mapStyle="mapbox://styles/mapbox/streets-v9"
         accessToken={MAP_API_KEY}
+        scrollZoom={!mobileSize}
         {...viewport}
         onViewportChange={setViewport}
         onClick={handleMapClick}

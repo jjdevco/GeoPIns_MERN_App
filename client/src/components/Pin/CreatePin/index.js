@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-
 import { withStyles } from "@material-ui/core/styles";
+import { unstable_useMediaQuery as useMediaQuery } from "@material-ui/core/useMediaQuery";
 
 import ClearButton from "./ClearButton";
 import SaveButton from "./SaveButton";
@@ -12,6 +12,8 @@ import AddAPhotoIcon from "@material-ui/icons/AddAPhotoTwoTone";
 import LandscapeIcon from "@material-ui/icons/LandscapeOutlined";
 
 const CreatePin = ({ classes }) => {
+  const mobileSize = useMediaQuery("(max-width: 650px)");
+
   const [title, setTitle] = useState("");
   const [image, setImage] = useState("");
   const [content, setContent] = useState("");
@@ -70,7 +72,7 @@ const CreatePin = ({ classes }) => {
           name="content"
           label="Content"
           variant="outlined"
-          rows={6}
+          rows={mobileSize ? 3 : 6}
           multiline
           fullWidth
           required
